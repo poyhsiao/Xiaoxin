@@ -1,6 +1,8 @@
 name: Update Codebase Artifact
 
-# Re-index when source code changes, commit updated artifact
+# When source code changes, notify teammates to regenerate local artifact.
+# Automated re-index via CI is not yet supported (codebase-memory-mcp has no CLI).
+# Teammates: after pulling, run `mcp__codebase-memory-mcp__index_repository` to regenerate.
 on:
   push:
     branches: [main]
@@ -13,58 +15,30 @@ on:
       - 'tsconfig/**'
       - '!.github/workflows/**'
 
-# Only keep the latest run to avoid artifact spam
+# Only keep the latest run to avoid notification spam
 concurrency:
   group: artifact-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  update-artifact:
+  notify:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 2
 
     steps:
       - uses: actions/checkout@v4
         with:
           sparse-checkout: |
-            .codebase-memory
+            .codebase-memory/graph.db.zst
             .gitattributes
           sparse-checkout-cone-mode: false
 
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 9
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Re-index codebase
+      - name: Verify artifact present
         run: |
-          # Re-export artifact using MCP CLI tool
-          npx --yes @modelcontextprotocol/server-codebase-memory \
-            --repo-path . \
-            --mode full \
-            --persistence
-
-      - name: Detect artifact changes
-        id: changed
-        run: |
-          if git diff --quiet .codebase-memory/graph.db.zst; then
-            echo "changed=false" >> $GITHUB_OUTPUT
+          if [ -f ".codebase-memory/graph.db.zst" ]; then
+            echo "Artifact is up to date: $(du -h .codebase-memory/graph.db.zst | cut -f1)"
+            echo "Teammates: after \`git pull\`, run \`/index-repo\` in Claude Code to re-index if needed."
           else
-            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "WARNING: graph.db.zst not found in the commit"
+            exit 1
           fi
-
-      - name: Commit updated artifact
-        if: steps.changed.outputs.changed == 'true'
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git add .codebase-memory/graph.db.zst
-          git commit -m "chore: update codebase-memory artifact [skip ci]"
-          git push
