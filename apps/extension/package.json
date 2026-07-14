@@ -4,8 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "wxt dev",
-    "build": "wxt build"
+    "dev": "wxt dev"
   },
   "dependencies": {
     "react": "^18.3.0",
