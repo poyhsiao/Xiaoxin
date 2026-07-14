@@ -14,5 +14,5 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'warn',
     'no-console': 'warn',
   },
-  ignorePatterns: ['dist'],
+  ignorePatterns: ['dist', 'coverage'],
 };

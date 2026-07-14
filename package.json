@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "release": "echo No NPM publish needed",
     "dev": "pnpm --filter @xiaoxin/backend dev",
     "dev:web": "pnpm --filter @xiaoxin/web dev",
     "build": "pnpm -r build",
