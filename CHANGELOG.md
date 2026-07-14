@@ -2,7 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.0.0] — 2026-07-14
+## [v0.1.0] — 2026-07-14
+
+### Fixed
+- **backend**: Add `--passWithNoTests` to jest (no test files yet)
+- **web**: Add ESLint config for next lint
+- **backend**: Add ESLint config to resolve CI lint failure
+- **backend**: Run prisma generate before nest build
+- **common**: Add missing tags module, fix Prisma enums, regenerate client
 
 ### Added
 - Monorepo setup with pnpm workspaces
