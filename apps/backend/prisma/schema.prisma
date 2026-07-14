@@ -1,0 +1,194 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum OrgRole {
+  OWNER
+  ADMIN
+  EDITOR
+  VIEWER
+}
+
+enum OrganizationVisibility {
+  PUBLIC
+  INVITE_ONLY
+  PRIVATE
+}
+
+enum BookmarkStatus {
+  UNREAD
+  READ
+  ARCHIVED
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  avatar        String?
+  password      String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  ownedOrgs     Organization[]
+  memberships   Member[]
+  bookmarks     Bookmark[]
+  subscriptions Subscription[]
+  notifications Notification[]
+  syncEvents    SyncEvent[]
+}
+
+model Organization {
+  id          String                @id @default(cuid())
+  name        String
+  slug        String                @unique
+  description String?
+  visibility  OrganizationVisibility @default(INVITE_ONLY)
+  logo        String?
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+  ownerId     String
+
+  owner       User         @relation(fields: [ownerId], references: [id])
+  members     Member[]
+  spaces      Space[]
+  subscribers Subscription[]
+}
+
+model Member {
+  userId String
+  orgId  String
+  role   OrgRole @default(VIEWER)
+  createdAt DateTime @default(now())
+
+  user User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  org  Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  @@id([userId, orgId])
+}
+
+model Space {
+  id          String      @id @default(cuid())
+  name        String
+  slug        String
+  description String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  orgId       String
+
+  org         Organization  @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  collections Collection[]
+
+  @@unique([orgId, slug])
+}
+
+model Collection {
+  id          String      @id @default(cuid())
+  name        String
+  slug        String
+  description String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  spaceId     String
+
+  space       Space      @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  bookmarks   Bookmark[]
+
+  @@unique([spaceId, slug])
+}
+
+model Bookmark {
+  id           String         @id @default(cuid())
+  url          String
+  title        String?
+  description  String?
+  ogImage      String?
+  favicon      String?
+  status       BookmarkStatus @default(UNREAD)
+  customOrder  Int            @default(0)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  creatorId    String
+  collectionId String
+
+  creator      User           @relation(fields: [creatorId], references: [id])
+  collection   Collection      @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  tags         BookmarkTag[]
+
+  @@index([url])
+  @@index([collectionId])
+}
+
+model Tag {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  slug      String   @unique
+  color     String   @default("#6366f1")
+  createdAt DateTime @default(now())
+
+  bookmarks BookmarkTag[]
+}
+
+model BookmarkTag {
+  bookmarkId String
+  tagId      String
+
+  bookmark Bookmark @relation(fields: [bookmarkId], references: [id], onDelete: Cascade)
+  tag      Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([bookmarkId, tagId])
+}
+
+model ShareLink {
+  id        String    @id @default(cuid())
+  token     String    @unique @default(cuid())
+  type      String
+  targetId  String
+  expiresAt DateTime?
+  createdAt DateTime  @default(now())
+}
+
+model Subscription {
+  id          String    @id @default(cuid())
+  subscriberId String
+  orgId       String
+  createdAt   DateTime  @default(now())
+
+  subscriber  User        @relation(fields: [subscriberId], references: [id])
+  org         Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  @@unique([subscriberId, orgId])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  content   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, read])
+}
+
+model SyncEvent {
+  id         String   @id @default(cuid())
+  userId     String
+  entityType String
+  entityId   String
+  action     String
+  payload    Json?
+  deviceInfo String?
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, entityType, entityId])
+}

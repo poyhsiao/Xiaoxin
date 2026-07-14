@@ -1,0 +1,20 @@
+{
+  "name": "xiaoxin",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm --filter @xiaoxin/backend dev",
+    "dev:web": "pnpm --filter @xiaoxin/web dev",
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "test": "pnpm -r test",
+    "db:migrate": "pnpm --filter @xiaoxin/backend prisma:migrate",
+    "db:generate": "pnpm --filter @xiaoxin/backend prisma:generate",
+    "db:push": "pnpm --filter @xiaoxin/backend prisma:db:push"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}
