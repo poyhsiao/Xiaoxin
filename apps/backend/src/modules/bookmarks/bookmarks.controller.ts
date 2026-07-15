@@ -21,28 +21,32 @@ export class BookmarksController {
   }
 
   @Get('collections/:collectionId/bookmarks')
-  async findAll(@Param('collectionId') collectionId: string) {
-    return this.bookmarksService.findAll(collectionId);
+  async findAll(@Param('collectionId') collectionId: string, @Request() req: any) {
+    return this.bookmarksService.findAll(collectionId, req.user.id);
   }
 
   @Get('bookmarks/search')
-  async search(@Query('q') query: string) {
-    return this.bookmarksService.search(query);
+  async search(@Query('q') query: string, @Request() req: any) {
+    return this.bookmarksService.search(query, req.user.id);
   }
 
   @Get('bookmarks/:id')
-  async findOne(@Param('id') id: string) {
-    return this.bookmarksService.findById(id);
+  async findOne(@Param('id') id: string, @Request() req: any) {
+    return this.bookmarksService.findById(id, req.user.id);
   }
 
   @Patch('bookmarks/:id')
-  async update(@Param('id') id: string, @Body() body: { title?: string; description?: string; status?: BookmarkStatus; url?: string }) {
-    return this.bookmarksService.update(id, body);
+  async update(
+    @Param('id') id: string,
+    @Body() body: { title?: string; description?: string; status?: BookmarkStatus; url?: string },
+    @Request() req: any,
+  ) {
+    return this.bookmarksService.update(id, body, req.user.id);
   }
 
   @Delete('bookmarks/:id')
-  async delete(@Param('id') id: string) {
-    await this.bookmarksService.delete(id);
+  async delete(@Param('id') id: string, @Request() req: any) {
+    await this.bookmarksService.delete(id, req.user.id);
     return { success: true };
   }
 }

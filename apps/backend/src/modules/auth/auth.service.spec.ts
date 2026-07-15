@@ -57,7 +57,7 @@ describe('AuthService', () => {
 
       const result = await service.register('test@example.com', 'password123', 'Test User');
 
-      expect(bcrypt.hash).toHaveBeenCalledWith('password123', 10);
+      expect(bcrypt.hash).toHaveBeenCalledWith('password123', 12);
       expect(mockPrisma.user.findUnique).toHaveBeenCalledWith({ where: { email: 'test@example.com' } });
       expect(mockPrisma.user.create).toHaveBeenCalled();
       expect(result).toEqual({ accessToken: 'jwt-token' });
@@ -102,7 +102,9 @@ describe('AuthService', () => {
     });
 
     it('should throw UnauthorizedException for non-existent user', async () => {
+      // Timing attack protection: bcrypt.compare is always called, even for non-existent users
       mockPrisma.user.findUnique.mockResolvedValue(null);
+      (bcrypt.compare as jest.Mock).mockResolvedValue(false);
 
       await expect(service.login('nonexistent@example.com', 'password123')).rejects.toThrow(UnauthorizedException);
     });

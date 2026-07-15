@@ -2,10 +2,10 @@ import { defineConfig } from 'wxt';
 
 export default defineConfig({
   publicDir: 'public',
+  react: true,
   manifest: {
-    name: '小新書籤',
-    version: '1.0.0',
+    name: 'Xiaoxin Bookmarks',
     description: 'Xiaoxin bookmark manager',
-    permissions: ['storage', 'activeTab'],
+    version: '1.0.0',
   },
 });

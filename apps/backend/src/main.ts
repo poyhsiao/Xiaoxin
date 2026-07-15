@@ -6,6 +6,17 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // CORS for extension and web clients
+  app.enableCors({
+    origin: [
+      process.env.WEB_URL || 'http://localhost:3000',
+      'chrome-extension://',
+    ],
+    methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+  });
+
   app.setGlobalPrefix('api/v1');
 
   app.useGlobalPipes(

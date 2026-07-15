@@ -3,6 +3,8 @@ import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../../database/prisma.service';
 import * as bcrypt from 'bcrypt';
 
+const BCRYPT_ROUNDS = 12;
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -14,7 +16,7 @@ export class AuthService {
     const existing = await this.prisma.user.findUnique({ where: { email } });
     if (existing) throw new ConflictException('Email already registered');
 
-    const hashed = await bcrypt.hash(password, 10);
+    const hashed = await bcrypt.hash(password, BCRYPT_ROUNDS);
     const user = await this.prisma.user.create({
       data: { email, password: hashed, name },
     });
@@ -23,11 +25,20 @@ export class AuthService {
   }
 
   async login(email: string, password: string) {
-    const user = await this.prisma.user.findUnique({ where: { email } });
-    if (!user || !user.password) throw new UnauthorizedException('Invalid credentials');
+    // Use select to avoid fetching password unnecessarily
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+      select: { id: true, email: true, password: true },
+    });
 
-    const valid = await bcrypt.compare(password, user.password);
-    if (!valid) throw new UnauthorizedException('Invalid credentials');
+    // Always perform bcrypt compare to prevent timing attack
+    // Use a dummy hash if user doesn't exist to ensure consistent timing
+    const hashToCompare = user?.password ?? '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4.VTtYH8sMw4Y4W6';
+    const isValid = await bcrypt.compare(password, hashToCompare);
+
+    if (!user || !user.password || !isValid) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
 
     return this.generateToken(user.id, user.email);
   }
