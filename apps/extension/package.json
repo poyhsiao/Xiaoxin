@@ -4,7 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "wxt dev"
+    "dev": "wxt dev",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "coverage": "vitest run --coverage"
   },
   "dependencies": {
     "react": "^18.3.0",
@@ -12,7 +15,9 @@
   },
   "devDependencies": {
     "@types/chrome": "^0.0.268",
+    "@vitest/coverage-v8": "^2.1.9",
     "typescript": "^5.4.0",
+    "vitest": "^2.1.9",
     "wxt": "^0.18.0"
   }
 }

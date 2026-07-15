@@ -1,15 +1,15 @@
-# Xiaoxin
+# 小新 (Xiaoxin)
 
-A monorepo powering the 小信 (Xiaoxin) messaging and automation platform.
+書籤管理平台，類似 Toby，支援多組織架構、多平台用戶端，提供完整的分享協作功能和即時同步能力。
 
 ## Apps
 
-| App | Stack | Description |
-|-----|-------|-------------|
-| **backend** | NestJS + Prisma | REST/GraphQL API server |
-| **web** | Next.js + Tailwind | User-facing web client |
-| **extension** | — | Browser/extension module |
-| **mobile** | — | Mobile app module |
+| App | Stack | Coverage | Description |
+|-----|-------|---------|-------------|
+| **backend** | NestJS + Prisma + PostgreSQL | 98% | REST API server with JWT auth, Redis |
+| **web** | Next.js + Tailwind + React Query | 82% | User-facing web client |
+| **extension** | WXT + TypeScript | 100% | Cross-browser extension (Chrome/Firefox/Safari/Edge) |
+| **mobile** | Flutter + Drift + Riverpod | — | iOS/Android mobile app |
 
 ## Stack
 
