@@ -9,7 +9,6 @@ const bookmarkSchema = z.object({
   url: z.string().url('請輸入有效的 URL'),
   title: z.string().optional(),
   description: z.string().optional(),
-  tags: z.array(z.string()).optional(),
 });
 
 type BookmarkFormData = z.infer<typeof bookmarkSchema>;
@@ -27,7 +26,6 @@ interface BookmarkFormProps {
 }
 
 export default function BookmarkForm({ initialData, onSubmit, onCancel }: BookmarkFormProps) {
-  const [urlInput, setUrlInput] = useState(initialData?.url || '');
   const [isFetchingMeta, setIsFetchingMeta] = useState(false);
   const [tagInput, setTagInput] = useState('');
   const [tags, setTags] = useState<string[]>(initialData?.tags || []);
@@ -36,6 +34,7 @@ export default function BookmarkForm({ initialData, onSubmit, onCancel }: Bookma
     register,
     handleSubmit,
     setValue,
+    getValues,
     formState: { errors, isSubmitting },
   } = useForm<BookmarkFormData>({
     resolver: zodResolver(bookmarkSchema),
@@ -63,8 +62,9 @@ export default function BookmarkForm({ initialData, onSubmit, onCancel }: Bookma
   };
 
   const handleUrlBlur = () => {
-    if (urlInput && !initialData?.id) {
-      fetchMetadata(urlInput);
+    const url = getValues('url');
+    if (url && !initialData?.id) {
+      fetchMetadata(url);
     }
   };
 
@@ -92,10 +92,13 @@ export default function BookmarkForm({ initialData, onSubmit, onCancel }: Bookma
         </label>
         <input
           type="url"
-          {...register('url')}
-          value={urlInput}
-          onChange={e => setUrlInput(e.target.value)}
-          onBlur={handleUrlBlur}
+          {...register('url', {
+            onBlur: (e) => {
+              if (e.target.value && !initialData?.id) {
+                fetchMetadata(e.target.value);
+              }
+            },
+          })}
           placeholder="https://example.com"
           className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           disabled={!!initialData?.id}

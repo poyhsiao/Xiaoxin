@@ -1,22 +1,35 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 
-const SSRF_BLOCK_PATTERNS = [
-  /^http:\/\//i,
-  /^https?:\/\/localhost/i,
-  /^https?:\/\/127\./i,
-  /^https?:\/\/10\./i,
-  /^https?:\/\/172\.(1[6-9]|2\d|3[01])\./i,
-  /^https?:\/\/192\.168\./i,
-  /^https?:\/\/0\.0\.0\.0/i,
-  /^https?:\/\/\w*\.onion/i,
-];
-
 @Injectable()
 export class MetadataService {
-  private isUrlAllowed(url: string): boolean {
-    if (!url.startsWith('https://')) return false;
-    return !SSRF_BLOCK_PATTERNS.some((p) => p.test(url));
+  private isUrlAllowed(rawUrl: string): boolean {
+    let url: URL;
+
+    try {
+      url = new URL(rawUrl);
+    } catch {
+      return false;
+    }
+
+    if (url.protocol !== 'https:') return false;
+
+    const host = url.hostname.toLowerCase();
+
+    if (host === 'localhost' || host === '0.0.0.0') return false;
+
+    if (host.endsWith('.onion')) return false;
+
+    if (
+      host.startsWith('127.') ||
+      host.startsWith('10.') ||
+      /^192\.168\./.test(host) ||
+      /^172\.(1[6-9]|2\d|3[01])\./.test(host)
+    ) {
+      return false;
+    }
+
+    return true;
   }
 
   async fetch(url: string) {
@@ -25,13 +38,26 @@ export class MetadataService {
     }
 
     try {
-      const { data } = await axios.get(url, { timeout: 5000 });
+      const { data } = await axios.get(url, {
+        timeout: 5000,
+        maxRedirects: 0,
+        maxContentLength: 2 * 1024 * 1024,
+        maxBodyLength: 2 * 1024 * 1024,
+      });
       const html = typeof data === 'string' ? data : '';
 
       const getMeta = (prop: string, attr: 'property' | 'name') => {
-        const re = new RegExp(`<meta\\s+${attr}=["']${prop}["'][^>]*content=["']([^"']*)["'][^>]*>|<meta\\s+[^>]*content=["']([^"']*)["'][^>]*${attr}=["']${prop}["'][^>]*>`, 'i');
-        const match = html.match(re);
-        return match?.[1] || match?.[2] || '';
+        const reAttrFirst = new RegExp(
+          `<meta\\s+${attr}=["']${prop}["'][^>]*content=["']([^"']*)["']`,
+          'i',
+        );
+        const reContentFirst = new RegExp(
+          `<meta\\s+[^>]*content=["']([^"']*)["'][^>]*${attr}=["']${prop}["']`,
+          'i',
+        );
+
+        const match = html.match(reAttrFirst) || html.match(reContentFirst);
+        return match?.[1] || '';
       };
 
       return {

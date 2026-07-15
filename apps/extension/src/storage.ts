@@ -77,7 +77,7 @@ export async function searchBookmarks(query: string): Promise<Bookmark[]> {
 
   return bookmarks.filter(b =>
     b.url.toLowerCase().includes(lowerQuery) ||
-    b.title.toLowerCase().includes(lowerQuery) ||
+    b.title?.toLowerCase().includes(lowerQuery) ||
     b.domain.toLowerCase().includes(lowerQuery)
   );
 }

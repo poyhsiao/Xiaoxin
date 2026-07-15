@@ -1,9 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+const String kAuthTokenKey = 'auth_token';
+
 class ApiClient {
   static const String baseUrl = 'http://localhost:3000/api/v1';
-  static const String _tokenKey = 'auth_token';
+  static const String _tokenKey = kAuthTokenKey;
 
   late final Dio _dio;
   final FlutterSecureStorage _storage;
@@ -16,7 +18,7 @@ class ApiClient {
           receiveTimeout: const Duration(seconds: 30),
           headers: {'Content-Type': 'application/json'},
         )) {
-    _dio.interceptors.add(_AuthInterceptor(_storage, _dio));
+    _dio.interceptors.add(_AuthInterceptor(_storage));
   }
 
   Dio get dio => _dio;
@@ -71,13 +73,12 @@ class ApiClient {
 
 class _AuthInterceptor extends Interceptor {
   final FlutterSecureStorage _storage;
-  final Dio _dio;
 
-  _AuthInterceptor(this._storage, this._dio);
+  _AuthInterceptor(this._storage);
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
-    final token = await _storage.read(key: 'auth_token');
+    final token = await _storage.read(key: kAuthTokenKey);
     if (token != null) {
       options.headers['Authorization'] = 'Bearer $token';
     }
@@ -85,9 +86,9 @@ class _AuthInterceptor extends Interceptor {
   }
 
   @override
-  void onError(DioException err, ErrorInterceptorHandler handler) {
+  void onError(DioException err, ErrorInterceptorHandler handler) async {
     if (err.response?.statusCode == 401) {
-      _storage.delete(key: 'auth_token');
+      await _storage.delete(key: kAuthTokenKey);
     }
     handler.next(err);
   }

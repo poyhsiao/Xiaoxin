@@ -99,8 +99,12 @@ describe('URL Validation', () => {
       expect(extractDomain('http://localhost:3000')).toBe('localhost');
     });
 
-    it('should return null for empty string', () => {
-      expect(extractDomain('')).toBe(null);
+    it('should handle protocol-relative URLs', () => {
+      expect(extractDomain('//example.com/path')).toBe('example.com');
+    });
+
+    it('should handle punycode domains', () => {
+      expect(extractDomain('https://xn--bcher-kva.example/path')).toBe('xn--bcher-kva.example');
     });
 
     it('should return null for empty string', () => {
@@ -117,8 +121,8 @@ describe('URL Validation', () => {
       expect(validateAndNormalizeUrl('https://example.com')).toBe('https://example.com');
     });
 
-    it('should return null for empty string', () => {
-      expect(validateAndNormalizeUrl('')).toBe(null);
+    it('should trim whitespace and add protocol if missing', () => {
+      expect(validateAndNormalizeUrl('  example.com/path  ')).toBe('https://example.com/path');
     });
 
     it('should return null for empty string', () => {
