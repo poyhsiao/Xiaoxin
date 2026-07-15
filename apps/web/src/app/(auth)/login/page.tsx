@@ -34,7 +34,7 @@ export default function LoginPage() {
       <div className="max-w-md w-full p-6 bg-white rounded-lg shadow-md">
         <h1 className="text-2xl font-bold mb-6 text-center">登入 小新</h1>
         {error && <p className="text-red-500 mb-4">{error}</p>}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4" data-testid="login-form">
           <div>
             <label className="block text-sm font-medium mb-1">Email</label>
             <input
