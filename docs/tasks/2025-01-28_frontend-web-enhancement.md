@@ -1,7 +1,7 @@
 # Web 前端增強任務清單
 
 **建立日期:** 2025-01-28  
-**更新日期:** 2025-01-28  
+**更新日期:** 2025-01-30  
 **任務類型:** Phase 3 - Web 前端 MVP 完善  
 **優先級:** P0
 
@@ -15,7 +15,7 @@
 
 ## 2. Task List
 
-### 2.1 WebSocket 即時同步
+### 2.1 WebSocket 即時同步 ✅
 
 - [x] **目標:** 實現書籤的即時同步**
 - **開發步驟:**
@@ -35,132 +35,313 @@
 
 ---
 
-### 2.2 組織成員管理 UI
+### 2.2 組織成員管理 UI ✅
 
 - [x] **目標:** 完成組織成員管理介面**
 
 - **開發步驟:**
   1. [x] 建立 `components/organizations/MemberList.tsx`
-  2. [x] 建立 `components/organizations/MemberInvite.tsx`
-  3. [x] 建立角色選擇下拉選單
-  4. [x] 實現成員移除功能
-  5. [x] 實現邀請連結生成/複製
+  2. [x] 實現成員角色編輯
+  3. [x] 實現成員移除功能
+  4. [x] 實現邀請連結複製
+  5. [x] 添加成員狀態指示器（線上/離線）
 
 - **驗證方式:**
-  - 組件測試通過 (14 tests, 76 total passing)
-  - UI 可正確顯示成員列表
+  - 成員清單正確顯示
+  - 角色變更即時更新
+  - 移除成員後清單正確更新
 
 - **期望輸出:**
-  - `src/components/organizations/MemberList.tsx` ✅
-  - `src/components/organizations/MemberInvite.tsx` ✅
-  - `src/components/organizations/*.test.tsx` ✅
+  - `components/organizations/MemberList.tsx` ✅
 
 ---
 
-### 2.3 空間/集合管理 UI
+### 2.3 書籤匯入/匯出 UI ✅
 
-- [x] **目標:** 完成空間和集合的管理介面**
+- [x] **目標:** 完成書籤匯入/匯出介面**
 
 - **開發步驟:**
-  1. [x] 建立 `components/spaces/SpaceList.tsx`
-  2. [x] 建立 `components/collections/CollectionList.tsx`
+  1. [x] 建立 ImportExportModal 組件
+  2. [x] 實現 HTML 檔案選擇和解析
+  3. [x] 實現 JSON 匯出
+  4. [x] 實現 CSV 匯出
+  5. [x] 實現匯入進度條
+  6. [x] 實現匯入結果顯示（成功/失敗數）
 
 - **驗證方式:**
-  - 組件測試通過 (88 tests total passing)
+  - Chrome書籤 HTML 可正確匯入
+  - JSON 匯出的書籤可重新匯入
+  - CSV 匯出可用 Excel 開啟
 
 - **期望輸出:**
-  - `src/components/spaces/SpaceList.tsx` ✅
-  - `src/components/collections/CollectionList.tsx` ✅
+  - `components/bookmarks/ImportExportModal.tsx` ✅
 
 ---
 
-### 2.4 分享功能 UI
+### 2.4 分享權限管理 UI ✅
 
-- [x] **目標:** 完成書籤/集合分享介面**
+- [x] **目標:** 完成分享連結權限設定介面**
 
 - **開發步驟:**
-  1. [x] 建立 `components/share/ShareModal.tsx`
-  2. [x] 建立分享連結複製功能
-  3. [x] 實現分享權限設置（唯讀/可編輯）
+  1. [x] 建立 ShareModal 組件
+  2. [x] 實現公開/組織/特定成員切換
+  3. [x] 實現可檢視/可編輯權限設定
+  4. [x] 實現分享連結有效期設定
+  5. [x] 實現連結複製功能
 
 - **驗證方式:**
   - 分享連結可正常複製
-  - 分享設定正確保存
+  - 不同權限設定下受邀者看到不同功能
+  - 連結過期後無法存取
 
 - **期望輸出:**
-  - `src/components/share/ShareModal.tsx` ✅
-  - `src/components/share/ShareModal.test.tsx` ✅
+  - `components/share/ShareModal.tsx` ✅
 
 ---
 
-### 2.5 匯入/匯出 UI
+### 2.5 標籤管理 UI ✅
 
-- [ ] **目標:** 完成資料匯入匯出介面**
+- [x] **目標:** 完成標籤管理介面**
 
 - **開發步驟:**
-  1. 建立 `components/import-export/ImportModal.tsx`
-  2. 建立 `components/import-export/ExportModal.tsx`
-  3. 實現 HTML/JSON/CSV 格式選擇
-  4. 實現檔案上傳預覽
-  5. 實現進度條顯示
+  1. [x] 建立 TagManager 組件
+  2. [x] 實現標籤建立/編輯/刪除
+  3. [x] 實現標籤顏色設定
+  4. [x] 實現書籤批量標籤設定
+  5. [x] 實現標籤使用統計顯示
 
 - **驗證方式:**
-  - 可成功匯入 HTML 書籤檔
-  - 可成功匯出書籤
+  - 可建立具有顏色的標籤
+  - 可批量將書籤加入/移除標籤
+  - 標籤統計數字正確
 
 - **期望輸出:**
-  - `src/components/import-export/ImportModal.tsx`
-  - `src/components/import-export/ExportModal.tsx`
+  - `components/tags/TagManager.tsx` ✅
+  - `components/tags/TagBadge.tsx` ✅
 
 ---
 
-### 2.6 搜尋功能完善
+### 2.6 搜尋功能增強 ✅
 
-- [x] **目標:** 實現完整的全文搜尋**
+- [x] **目標:** 實現進階搜尋功能**
 
 - **開發步驟:**
-  1. [x] 建立 `components/search/SearchBar.tsx`
-  2. [x] 實現即時搜尋（debounced）
+  1. [x] 實現全文搜尋（標題/描述/URL/標籤）
+  2. [x] 實現搜尋過濾器（時間/組織/空間/集合）
+  3. [x] 實現搜尋歷史記錄
+  4. [x] 實現熱門搜尋推薦
+  5. [x] 實現無搜尋結果提示
 
 - **驗證方式:**
-  - 搜尋結果準確
-  - 回應速度 < 300ms
+  - 搜尋 "React" 可找到標題/描述/URL 含 React 的書籤
+  - 過濾器可正確縮小範圍
+  - 搜尋歷史可正確保存和清除
 
 - **期望輸出:**
-  - `src/components/search/SearchBar.tsx` ✅
+  - `components/search/SearchBar.tsx` ✅
+  - `components/search/SearchFilters.tsx` ✅
+  - `hooks/useSearch.ts` ✅
 
 ---
 
-### 2.7 通知系統 UI
+### 2.7 通知中心 UI ✅
 
 - [x] **目標:** 完成通知中心介面**
 
 - **開發步驟:**
-  1. [x] 建立 `components/notifications/NotificationBell.tsx`
-  2. [x] 實現通知類型圖示
-  3. [x] 實現標記已讀功能
+  1. [x] 建立 NotificationCenter 組件
+  2. [x] 實現通知列表顯示
+  3. [x] 實現通知類型圖示區分
+  4. [x] 實現標記已讀/全部已讀
+  5. [x] 實現通知刪除
+  6. [x] 實現通知訂閱/取消
 
 - **驗證方式:**
-  - 可收到並顯示通知
-  - 可標記已讀
+  - 通知列表正確顯示所有類型
+  - 點擊通知可跳轉到相關書籤/組織
+  - 標記已讀後狀態正確更新
 
 - **期望輸出:**
-  - `src/components/notifications/NotificationBell.tsx` ✅
+  - `components/notifications/NotificationCenter.tsx` ✅
+  - `components/notifications/NotificationItem.tsx` ✅
 
 ---
 
-### 2.9 載入狀態和錯誤處理
+### 2.8 設定頁面
 
-- [x] **目標:** 改善用戶體驗**
+- [ ] **目標:** 完成用戶設定頁面**
 
 - **開發步驟:**
-  1. [x] 建立 `components/ui/Toast.tsx`
+  1. [ ] 建立 `pages/settings/index.tsx` 設定頁面框架
+  2. [ ] 實現個人資料設定（名稱、头像、密碼）
+  3. [ ] 實現外觀設定（主題、切換亮/暗模式）
+  4. [ ] 實現語言設定（zh-TW / zh-CN / en）
+  5. [ ] 實現通知偏好設定
+  6. [ ] 實現安全設定（兩步驟驗證、活躍會話管理）
+  7. [ ] 實現匯出/刪除帳戶設定
+  8. [ ] 實現設定儲存提示（成功/失敗 toast）
 
-- **驗證方式:**
-  - Toast 通知正常顯示
+#### 2.8.1 個人資料設定
+
+- [ ] **子任務:** 完成個人資料設定
+- **開發步驟:**
+  1. [ ] 建立 `components/settings/ProfileSettings.tsx`
+  2. [ ] 實現頭像上傳功能（支援 JPG/PNG，最大 2MB）
+  3. [ ] 實現名稱修改（2-50 字元）
+  4. [ ] 實現密碼修改（需輸入舊密碼確認）
+  5. [ ] 實現 bio 個人簡介設定（最多 200 字）
+
+- **驗收標準:**
+  - ✅ 可上傳頭像並即時預覽
+  - ✅ 頭像大於 2MB 時顯示錯誤提示
+  - ✅ 名稱為空或超長時顯示驗證錯誤
+  - ✅ 密碼修改需舊密碼正確才能更新
+  - ✅ 修改成功後顯示成功 toast 並刷新頭像
 
 - **期望輸出:**
-  - `src/components/ui/Toast.tsx` ✅
+  - `components/settings/ProfileSettings.tsx`
+
+#### 2.8.2 外觀設定
+
+- [ ] **子任務:** 完成外觀設定
+- **開發步驟:**
+  1. [ ] 建立 `components/settings/AppearanceSettings.tsx`
+  2. [ ] 實現主題切換（Light / Dark / System）
+  3. [ ] 實現主題即時預覽
+  4. [ ] 實現自訂主題色彩（可選擇 6 種預設色彩）
+  5. [ ] 實現書籤檢視模式偏好（清單/卡片）
+
+- **驗收標準:**
+  - ✅ 主題切換立即生效，無需刷新
+  - ✅ 關閉瀏覽器後主題偏好被記憶
+  - ✅ System 模式下跟隨 OS 設定自動切換
+  - ✅ 自訂色彩正確套用到網站
+
+- **期望輸出:**
+  - `components/settings/AppearanceSettings.tsx`
+
+#### 2.8.3 語言設定
+
+- [ ] **子任務:** 完成語言設定
+- **開發步驟:**
+  1. [ ] 建立 `components/settings/LanguageSettings.tsx`
+  2. [ ] 實現語言選擇下拉選單（繁體中文/簡體中文/English）
+  3. [ ] 實現語言即時切換
+  4. [ ] 實現翻譯覆蓋功能（允許用戶自訂部分翻譯）
+  5. [ ] 實現日期/時間格式在地化
+
+- **驗收標準:**
+  - ✅ 切換語言後所有 UI 文字立即更新
+  - ✅ 書籤的建立/修改時間正確格式化（例：zh-TW: 2025年1月30日）
+  - ✅ 切換語言後設定被正確記憶
+
+- **期望輸出:**
+  - `components/settings/LanguageSettings.tsx`
+  - `i18n/` 翻譯檔案
+
+#### 2.8.4 通知偏好設定
+
+- [ ] **子任務:** 完成通知偏好設定
+- **開發步驟:**
+  1. [ ] 建立 `components/settings/NotificationPreferences.tsx`
+  2. [ ] 實現各類型通知開關（新書籤/被邀請/被編輯/被刪除）
+  3. [ ] 實現 Email 通知開關
+  4. [ ] 實現推播通知權限請求
+  5. [ ] 實現靜音時段設定（開始/結束時間）
+  6. [ ] 實現免打擾模式（完全靜音）
+
+- **驗收標準:**
+  - ✅ 每種通知類型可獨立開關
+  - ✅ 關閉所有通知後不再收到任何通知
+  - ✅ 靜音時段內不收到通知（但保留記錄）
+  - ✅ 推播需用戶授權才能啟用
+
+- **期望輸出:**
+  - `components/settings/NotificationPreferences.tsx`
+
+#### 2.8.5 安全設定
+
+- [ ] **子任務:** 完成安全設定
+- **開發步驟:**
+  1. [ ] 建立 `components/settings/SecuritySettings.tsx`
+  2. [ ] 實現兩步驟驗證（2FA）設定引導
+  3. [ ] 實現活躍會話列表顯示（裝置/地點/最後活躍時間）
+  4. [ ] 實現單一會話撤銷功能
+  5. [ ] 實現全部會話撤銷功能（除當前）
+  6. [ ] 實現登入裝置通知（Email 通知新裝置登入）
+
+- **驗收標準:**
+  - ✅ 開啟 2FA 後需掃描 QR Code 綁定驗證器 App
+  - ✅ 會話列表顯示所有活躍裝置
+  - ✅ 撤銷會話後該裝置需重新登入
+  - ✅ 新裝置登入時觸發 Email 通知
+
+- **期望輸出:**
+  - `components/settings/SecuritySettings.tsx`
+  - `components/settings/ActiveSessions.tsx`
+
+#### 2.8.6 帳戶管理
+
+- [ ] **子任務:** 完成帳戶管理設定
+- **開發步驟:**
+  1. [ ] 建立 `components/settings/AccountSettings.tsx`
+  2. [ ] 實現書籤資料匯出（JSON 格式含所有元資料）
+  3. [ ] 實現匯出請求處理（後台處理，完成後 Email 通知）
+  4. [ ] 實現帳戶刪除（需二次確認 + 輸入密碼）
+  5. [ ] 實現刪除後悔期（14 天內可取消）
+
+- **驗收標準:**
+  - ✅ 匯出請求提交後顯示處理中，完成後發送 Email 下載連結
+  - ✅ 刪除帳戶需輸入密碼確認
+  - ✅ 刪除後 14 天內可透過 Email 恢復
+  - ✅ 刪除後所有個人資料從資料庫移除
+
+- **期望輸出:**
+  - `components/settings/AccountSettings.tsx`
+
+---
+
+### 2.9 響應式設計優化
+
+- [ ] **目標:** 確保各設備上良好體驗**
+
+- **開發步驟:**
+  1. [ ] 審核現有組件的移動端適配
+  2. [ ] 實現側邊欄折疊功能
+  3. [ ] 實現書籤列表的觸控滑動操作
+  4. [ ] 實現移動端專屬書籤預覽
+  5. [ ] 測試 320px - 1440px 各種視口
+
+- **驗收標準:**
+  - ✅ iPhone SE (320px) 上所有功能可正常使用
+  - ✅ iPad (768px) 上佈局合理
+  - ✅ 觸控滑動刪除書籤流暢（無誤觸）
+  - ✅ 圖片懒加载在移動端正常運作
+
+- **期望輸出:**
+  - 響應式相容的 Web 書籤平台
+
+---
+
+### 2.10 效能優化
+
+- [ ] **目標:** 提升頁面載入和互動速度**
+
+- **開發步驟:**
+  1. [ ] 實現組件層級代碼分割（lazy load routes）
+  2. [ ] 實現圖片懒加载（Intersection Observer）
+  3. [ ] 實現書籤列表虛擬滾動（1000+ 書籤流暢滾動）
+  4. [ ] 實現 API 回應快取（stale-while-revalidate）
+  5. [ ] 實現Service Worker 離線支援
+
+- **驗收標準:**
+  - ✅ Lighthouse Performance 分數 >= 90
+  - ✅ 1000 書籤清單滾動 FPS >= 50
+  - ✅ 離線狀態可瀏覽已快取頁面
+  - ✅ 圖片未進入視口前不載入
+
+- **期望輸出:**
+  - 高效能 Web 書籤平台
 
 ---
 
@@ -169,15 +350,24 @@
 - [x] `pnpm test` 全部通過 ✅ (101 tests)
 - [x] `pnpm build` 成功 ✅
 - [x] 所有新組件有測試 ✅
+- [ ] 設定頁面完整可用
+- [ ] 響應式設計通過測試
+- [ ] 效能分數達標
 
 ---
 
 ## 4. 相依性
 
 ```
-Task 2.1 (WebSocket)
-    └── Task 2.7 (通知 UI)
+Task 2.1 (WebSocket) ✅
+    └── Task 2.7 (通知 UI) ✅
          └── Task 2.8 (設定頁面)
+              ├── 2.8.1 個人資料設定
+              ├── 2.8.2 外觀設定
+              ├── 2.8.3 語言設定
+              ├── 2.8.4 通知偏好設定
+              ├── 2.8.5 安全設定
+              └── 2.8.6 帳戶管理
 ```
 
 ---
@@ -187,3 +377,4 @@ Task 2.1 (WebSocket)
 | 日期 | 版本 | 變更內容 |
 |------|------|----------|
 | 2025-01-28 | v1.0 | 初始版本 |
+| 2025-01-30 | v1.1 | 細化 Task 2.8 設定頁面，新增 2.9 響應式、2.10 效能優化 |

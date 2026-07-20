@@ -6,7 +6,7 @@
 
 | App | Stack | Coverage | Description |
 |-----|-------|---------|-------------|
-| **backend** | NestJS + Prisma + PostgreSQL | 98% | REST API server with JWT auth, Redis |
+| **backend** | NestJS + Prisma + PostgreSQL + WebSocket | 98% | REST API server with JWT auth, Redis, real-time notifications |
 | **web** | Next.js + Tailwind + React Query | 82% | User-facing web client |
 | **extension** | WXT + TypeScript | 100% | Cross-browser extension (Chrome/Firefox/Safari/Edge) |
 | **mobile** | Flutter + Drift + Riverpod | — | iOS/Android mobile app |
@@ -48,11 +48,21 @@ pnpm db:push      # Push schema to DB (dev)
 
 ```
 apps/
-  backend/        # NestJS API (port 3001)
+  backend/        # NestJS API (port 3001) + WebSocket gateway
   web/           # Next.js frontend
-  extension/     # Browser extension
-  mobile/        # Mobile app
+  extension/     # Browser extension (WXT)
+  mobile/        # Flutter mobile app
 ```
+
+## Features
+
+- 🔐 **Authentication**: JWT-based auth with timing-attack protection
+- 📁 **Bookmarks**: Full CRUD with collection organization
+- 🔔 **Real-time**: WebSocket notifications for updates
+- 🌐 **i18n**: Multi-language support
+- ⌨️ **Shortcuts**: Keyboard shortcut management
+- 🔄 **Sync**: Cloud synchronization with conflict resolution
+- 🏢 **Multi-tenant**: Organization-based access control
 
 ## License
 

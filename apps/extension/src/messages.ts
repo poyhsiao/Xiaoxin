@@ -2,7 +2,7 @@
  * Message passing types and utilities for extension communication
  */
 
-export type MessageType = 'SAVE_BOOKMARK' | 'GET_BOOKMARKS' | 'SEARCH_BOOKMARKS' | 'DELETE_BOOKMARK';
+export type MessageType = 'SAVE_BOOKMARK' | 'GET_BOOKMARKS' | 'SEARCH_BOOKMARKS' | 'DELETE_BOOKMARK' | 'UPDATE_BOOKMARK';
 
 export interface Bookmark {
   id: string;
@@ -39,11 +39,24 @@ export interface DeleteBookmarkMessage {
   };
 }
 
+export interface UpdateBookmarkMessage {
+  type: 'UPDATE_BOOKMARK';
+  payload: {
+    id: string;
+    title?: string;
+    url?: string;
+    description?: string;
+    collectionId?: string;
+    tags?: string[];
+  };
+}
+
 export type ExtensionMessage =
   | SaveBookmarkMessage
   | GetBookmarksMessage
   | SearchBookmarksMessage
-  | DeleteBookmarkMessage;
+  | DeleteBookmarkMessage
+  | UpdateBookmarkMessage;
 
 export interface MessageResponse<T = unknown> {
   success: boolean;
@@ -105,4 +118,25 @@ export function createDeleteBookmarkMessage(id: string): DeleteBookmarkMessage {
     type: 'DELETE_BOOKMARK',
     payload: { id },
   };
+}
+
+export function createEditMessage(id: string, updates: {
+  title?: string;
+  url?: string;
+  description?: string;
+  collectionId?: string;
+  tags?: string[];
+}): UpdateBookmarkMessage {
+  return {
+    type: 'UPDATE_BOOKMARK',
+    payload: { id, ...updates },
+  };
+}
+
+export function parseEditMessage(msg: UpdateBookmarkMessage) {
+  return msg.payload;
+}
+
+export function isEditMessage(msg: unknown): msg is UpdateBookmarkMessage {
+  return typeof msg === 'object' && msg !== null && 'type' in msg && (msg as any).type === 'UPDATE_BOOKMARK';
 }

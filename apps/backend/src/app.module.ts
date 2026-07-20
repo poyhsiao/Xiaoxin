@@ -10,6 +10,7 @@ import { TagsModule } from './modules/tags/tags.module';
 import { ShareModule } from './modules/share/share.module';
 import { MetadataModule } from './modules/metadata/metadata.module';
 import { ImportExportModule } from './modules/import-export/import-export.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
 import { PrismaModule } from './database/prisma.module';
 
 @Module({
@@ -26,6 +27,7 @@ import { PrismaModule } from './database/prisma.module';
     ShareModule,
     MetadataModule,
     ImportExportModule,
+    NotificationsModule,
   ],
 })
 export class AppModule {}

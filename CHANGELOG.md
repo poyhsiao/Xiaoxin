@@ -2,6 +2,40 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.2.0] — 2026-07-15
+
+### Added
+
+- **backend**: WebSocket notification system with real-time updates
+  - `NotificationsGateway` for WebSocket connections
+  - `NotificationsController` for REST endpoints
+  - `NotificationsService` for managing notifications
+  - Support for bookmark share and collection notifications
+- **extension**: New library modules with comprehensive test coverage
+  - `bookmarklet.ts` — bookmarklet generation utility
+  - `db.ts` — IndexedDB wrapper for local storage
+  - `i18n.ts` — internationalization support
+  - `shortcuts.ts` — keyboard shortcut management
+  - `sync.ts` — cloud synchronization engine
+  - 100% test coverage on all new modules
+- **extension**: `UPDATE_BOOKMARK` message type for editing bookmarks
+- **mobile**: Organization domain model and service
+  - `Organization` model with multi-tenant support
+  - `OrganizationService` for organization management
+- **web**: Settings components (Profile, Appearance, Language, Notification, Security, Account)
+- **web**: Test setup utilities for vitest
+
+### Changed
+
+- **mobile**: `BookmarkService` refactored — reduced from 130+ lines to cleaner implementation
+- **mobile**: App initialization now uses `ProviderScope` for Riverpod
+- **docs**: Updated all task documents with implementation progress
+
+### Security
+
+- **backend**: Enhanced notification access control
+- **extension**: Secure sync with conflict resolution
+
 ## [v0.1.2] — 2026-01-19
 
 ### Security
