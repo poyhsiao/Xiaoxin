@@ -1,48 +1,32 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Notification, NotificationType } from './entities/notification.entity';
+import { PrismaService } from '../../database/prisma.service';
 
 @Injectable()
 export class NotificationsService {
-  constructor(
-    @InjectRepository(Notification)
-    private readonly notificationRepo: Repository<Notification>,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
-  async create(
-    userId: string,
-    type: NotificationType,
-    title: string,
-    content?: string,
-    data?: Record<string, unknown>,
-  ): Promise<Notification> {
-    const notification = this.notificationRepo.create({
-      userId,
-      type,
-      title,
-      content: content || null,
-      data: data || null,
+  async create(userId: string, type: string, content: string) {
+    return this.prisma.notification.create({
+      data: { userId, type, content },
     });
-    return this.notificationRepo.save(notification);
   }
 
-  async findAllByUser(
-    userId: string,
-    page = 1,
-    limit = 20,
-  ): Promise<{ data: Notification[]; total: number }> {
-    const [data, total] = await this.notificationRepo.findAndCount({
-      where: { userId },
-      order: { createdAt: 'DESC' },
-      skip: (page - 1) * limit,
-      take: limit,
-    });
+  async findAllByUser(userId: string, page = 1, limit = 20) {
+    const skip = (page - 1) * limit;
+    const [data, total] = await this.prisma.$transaction([
+      this.prisma.notification.findMany({
+        where: { userId },
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: limit,
+      }),
+      this.prisma.notification.count({ where: { userId } }),
+    ]);
     return { data, total };
   }
 
-  async findOne(id: string, userId: string): Promise<Notification> {
-    const notification = await this.notificationRepo.findOne({
+  async findOne(id: string, userId: string) {
+    const notification = await this.prisma.notification.findFirst({
       where: { id, userId },
     });
     if (!notification) {
@@ -51,34 +35,29 @@ export class NotificationsService {
     return notification;
   }
 
-  async markAsRead(id: string, userId: string): Promise<Notification> {
-    const notification = await this.findOne(id, userId);
-    notification.isRead = true;
-    return this.notificationRepo.save(notification);
+  async markAsRead(id: string, userId: string) {
+    await this.findOne(id, userId);
+    return this.prisma.notification.update({
+      where: { id },
+      data: { read: true },
+    });
   }
 
-  async markAllAsRead(userId: string): Promise<void> {
-    await this.notificationRepo.update({ userId, isRead: false }, { isRead: true });
+  async markAllAsRead(userId: string) {
+    await this.prisma.notification.updateMany({
+      where: { userId, read: false },
+      data: { read: true },
+    });
   }
 
-  async delete(id: string, userId: string): Promise<void> {
-    const notification = await this.findOne(id, userId);
-    await this.notificationRepo.remove(notification);
+  async delete(id: string, userId: string) {
+    await this.findOne(id, userId);
+    await this.prisma.notification.delete({ where: { id } });
   }
 
-  async deleteOld(daysOld = 30): Promise<void> {
-    const cutoff = new Date();
-    cutoff.setDate(cutoff.getDate() - daysOld);
-    await this.notificationRepo
-      .createQueryBuilder()
-      .delete()
-      .where('created_at < :cutoff', { cutoff })
-      .execute();
-  }
-
-  async getUnreadCount(userId: string): Promise<number> {
-    return this.notificationRepo.count({
-      where: { userId, isRead: false },
+  async getUnreadCount(userId: string) {
+    return this.prisma.notification.count({
+      where: { userId, read: false },
     });
   }
 }
